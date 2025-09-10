@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Beetle Game</title>
+  <title>Beetle ARG</title>
   <style>
     body {
       background: #000;
@@ -14,6 +14,7 @@
       flex-direction: column;
       overflow: hidden;
       font-family: 'Courier New', monospace;
+      transition: filter 0.5s ease;
     }
 
     /* Beetlesoft logo with green hue + buzzing */
@@ -41,6 +42,7 @@
       animation: drip 3s infinite ease-in-out;
       font-weight: bold;
       letter-spacing: 0.1em;
+      margin: 20px 0;
     }
 
     @keyframes drip {
@@ -49,30 +51,140 @@
       100% { transform: scaleY(1); }
     }
 
-    /* Slime drip effect using pseudo-elements */
-    .slime-text::after {
-      content: '';
-      position: absolute;
-      width: 10px;
-      height: 30px;
-      background: #00ff66;
-      left: 50%;
-      top: 100%;
-      border-radius: 50%;
-      filter: blur(3px);
-      animation: drop 2s infinite ease-in-out;
+    /* Puzzle + form styling */
+    #puzzle, #formSection {
+      color: #0f0;
+      margin-top: 20px;
+      text-align: center;
     }
 
-    @keyframes drop {
-      0%   { opacity: 0; transform: translateY(0); }
-      50%  { opacity: 1; transform: translateY(20px); }
-      100% { opacity: 0; transform: translateY(40px); }
+    input, textarea, button {
+      background: #000;
+      color: #0f0;
+      border: 1px solid #0f0;
+      padding: 5px 10px;
+      margin: 5px;
+      font-family: 'Courier New', monospace;
+    }
+
+    button {
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background: #0f0;
+      color: #000;
+    }
+
+    /* Pop-up overlay */
+    #popupOverlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(6px);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    #popupOverlay h1 {
+      color: #00ff66;
+      font-size: 2em;
+      text-shadow: 0 0 10px #0f0, 0 0 20px #0c0;
+      animation: flicker 1.5s infinite alternate;
+    }
+
+    @keyframes flicker {
+      from { opacity: 0.8; }
+      to   { opacity: 1; }
     }
   </style>
 </head>
 <body>
   <img src="beetle_text.jpg" alt="Beetlesoft Logo" class="logo">
   <div class="slime-text">9.9.25</div>
+
+  <!-- Puzzle Section -->
+  <div id="puzzle">
+    <p>Enter the hidden word to unlock:</p>
+    <input type="text" id="codeInput" placeholder="Type here...">
+    <button onclick="checkCode()">Submit</button>
+  </div>
+
+  <!-- Hidden Playtest Form -->
+  <div id="formSection" style="display:none;">
+    <form id="playtestForm" action="https://getform.io/f/akkpezka" method="POST">
+      <label>Name:</label><br>
+      <input type="text" name="name" required><br><br>
+
+      <label>Wallet (ETH):</label><br>
+      <input type="text" name="wallet" placeholder="0xBeetle" required><br><br>
+
+      <label>Why do you seek the Beetle?</label><br>
+      <textarea name="message" rows="4" required></textarea><br><br>
+
+      <button type="submit">Join Playtest</button>
+    </form>
+  </div>
+
+  <!-- Pop-up overlay -->
+  <div id="popupOverlay">
+    <h1>You are buzzing with network spirit.</h1>
+  </div>
+
+  <script>
+    // Utility: hash a string into SHA-256 hex
+    async function sha256(message) {
+      const encoder = new TextEncoder();
+      const data = encoder.encode(message);
+      const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    // Unlock puzzle with hash check
+    async function checkCode() {
+      const input = document.getElementById("codeInput").value.trim();
+      const inputHash = await sha256(input);
+
+      // Precomputed SHA-256 hash of "CODENAME:MEGABEETLE"
+      const secretHash = "10e03cc8a28f04696ddc3891ae1d274cf0911cf4f62c16274660ea83d4d78927";
+
+      if (inputHash === secretHash) {
+        document.getElementById("formSection").style.display = "block";
+        document.getElementById("puzzle").style.display = "none";
+      } else {
+        alert("The beetle does not recognize you...");
+      }
+    }
+
+    // Handle form submission with AJAX
+    const form = document.getElementById("playtestForm");
+    form.addEventListener("submit", function(e) {
+      e.preventDefault(); // prevent redirect
+
+      const data = new FormData(form);
+
+      fetch(form.action, {
+        method: form.method,
+        body: data,
+        headers: { "Accept": "application/json" }
+      }).then(response => {
+        if (response.ok) {
+          document.body.style.filter = "blur(5px)";
+          document.getElementById("popupOverlay").style.display = "flex";
+          form.reset();
+        } else {
+          alert("The beetle resists your entry. Try again.");
+        }
+      }).catch(error => {
+        alert("A network spirit error occurred.");
+      });
+    });
+  </script>
 </body>
 </html>
-
