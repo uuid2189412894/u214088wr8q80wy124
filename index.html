@@ -77,9 +77,8 @@
       color: #000;
     }
 
-    /* Pop-up overlay */
+    /* Pop-up overlay (hidden by default) */
     #popupOverlay {
-      display: none;
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
       background: rgba(0,0,0,0.8);
@@ -89,6 +88,14 @@
       align-items: center;
       justify-content: center;
       text-align: center;
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+
+    #popupOverlay.active {
+      visibility: visible;
+      opacity: 1;
     }
 
     #popupOverlay h1 {
@@ -176,7 +183,7 @@
       }).then(response => {
         if (response.ok) {
           document.body.style.filter = "blur(5px)";
-          document.getElementById("popupOverlay").style.display = "flex";
+          document.getElementById("popupOverlay").classList.add("active");
           form.reset();
         } else {
           alert("The beetle resists your entry. Try again.");
