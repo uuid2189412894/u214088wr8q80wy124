@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Beetle ARG</title>
+  <style>
+    body {
+      background: #000;
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      overflow: hidden;
+      font-family: 'Courier New', monospace;
+    }
+
+    /* Beetlesoft logo with green hue + buzzing */
+    .logo {
+      width: 200px;
+      height: auto;
+      filter: hue-rotate(90deg) saturate(200%) drop-shadow(0 0 10px #0f0);
+      animation: buzz 0.08s infinite alternate;
+    }
+
+    @keyframes buzz {
+      from { transform: translate(0px, 0px) rotate(-0.2deg); }
+      to   { transform: translate(1px, -1px) rotate(0.2deg); }
+    }
+
+    /* Jungle Slime Text */
+    .slime-text {
+      font-size: 6em;
+      color: #00ff66;
+      text-shadow:
+        0 0 10px #00ff66,
+        0 0 20px #00cc55,
+        0 0 40px #009944;
+      filter: blur(0.8px) brightness(1.3);
+      animation: drip 3s infinite ease-in-out;
+      font-weight: bold;
+      letter-spacing: 0.1em;
+    }
+
+    @keyframes drip {
+      0%   { transform: scaleY(1); }
+      50%  { transform: scaleY(1.1) translateY(5px); }
+      100% { transform: scaleY(1); }
+    }
+
+    /* Slime drip effect using pseudo-elements */
+    .slime-text::after {
+      content: '';
+      position: absolute;
+      width: 10px;
+      height: 30px;
+      background: #00ff66;
+      left: 50%;
+      top: 100%;
+      border-radius: 50%;
+      filter: blur(3px);
+      animation: drop 2s infinite ease-in-out;
+    }
+
+    @keyframes drop {
+      0%   { opacity: 0; transform: translateY(0); }
+      50%  { opacity: 1; transform: translateY(20px); }
+      100% { opacity: 0; transform: translateY(40px); }
+    }
+  </style>
+</head>
+<body>
+  <img src="beetle_text.jpg" alt="Beetlesoft Logo" class="logo">
+  <div class="slime-text">9.9.25</div>
+</body>
+</html>
