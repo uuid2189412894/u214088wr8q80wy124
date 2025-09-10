@@ -153,9 +153,9 @@
       return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
     }
 
-    // Unlock puzzle with hash check
+    // Unlock puzzle with hash check (case-insensitive)
     async function checkCode() {
-      const input = document.getElementById("codeInput").value.trim();
+      const input = document.getElementById("codeInput").value.trim().toUpperCase();
       const inputHash = await sha256(input);
 
       // Precomputed SHA-256 hash of "CODENAME:MEGABEETLE"
@@ -195,4 +195,3 @@
   </script>
 </body>
 </html>
-
